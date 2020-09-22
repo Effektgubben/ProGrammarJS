@@ -1,0 +1,30 @@
+<head>
+    <meta charset="utf-8">
+    <title>ProGrammar</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+
+    <script src="clauses.js"></script>
+    <script src="wordTypes.js"></script>
+    <script src="generate.js"></script>
+    <script src="extras.js"></script>
+</head>
+
+<body>
+    <button onclick="generate()">Generate sentence</button>
+    <div id="result"></div>
+
+
+    <select id="wordType">
+        <option value="noun">Noun</option>
+        <option value="verb">Verb</option>
+        <option value="adverb">Adverb</option>
+    </select><br>
+    <div id="nounBox">
+        Base<input type="text" id="base"><br>
+        Plural<input type="text" id="plural"><br>
+        Proper name<input type="checkbox" id="proper"><br>
+        Countable<input type="checkbox" id="countable"><br>
+    </div>
+</body>
+
+
