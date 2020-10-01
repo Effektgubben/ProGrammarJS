@@ -2,10 +2,11 @@
     <meta charset="utf-8">
     <title>ProGrammar</title>
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@200;400;500&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@200;400;500&display=swap"
+          rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
     <script src="tools.js"></script>
     <script src="clauses.js"></script>
@@ -57,13 +58,12 @@
             </legend>
 
             <div id="nounBox" class="tr">
-                <label>Base <input type="text" class="w4" id="base"></label>
-                <label>Plural <input type="text" class="w4" id="plural"></label>
+                <label>Base <input class="w4" id="nounBase" v-model="base" placeholder="noun"></label>
+                <label>Plural <input type="text" class="w4" id="plural" placeholder="nouns"></label>
                 <label>Proper name <input type="checkbox" id="proper"></label>
                 <label>Countable <input type="checkbox" id="countable"></label>
+            <button class="td1 ml-auto mr0 db mt2 b--black-30 hover-bg-black pv1 bg-dark-blue ph2 br1 white" v-on:click="add">Add</button>
             </div>
-            <button
-                class="td1 ml-auto mr0 db mt2 b--black-30 hover-bg-black pv1 bg-dark-blue ph2 br1 white">Add</button>
         </fieldset>
     </div>
 </body>
@@ -87,4 +87,20 @@
     function renderInputs(template, onSubmit, parentEl, target = {}, submitLabel = 'Submit') {
         
     }
+
+
+    new Vue({
+        el: '#nounBox',
+        data: {
+            base: '',
+            plural: '',
+            countable: false,
+            proper: false
+        },
+        methods: {
+            add: function () {
+                console.log(this.base);
+            }
+        }
+    });
 </script>
