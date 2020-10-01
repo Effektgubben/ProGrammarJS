@@ -7,9 +7,11 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css" />
 
+    <script src="tools.js"></script>
     <script src="clauses.js"></script>
     <script src="wordTypes.js"></script>
     <script src="generate.js"></script>
+<<<<<<< Updated upstream
     <script src="extras.js"></script>
     <style>
         .ff-1 {
@@ -19,6 +21,9 @@
         .ff-mono {
             font-family: 'IBM Plex Mono'
         }
+=======
+</head>
+>>>>>>> Stashed changes
 
         label {
             display: block;
@@ -43,6 +48,7 @@
             <div id="result" class="h4 w5 ff-mono f6 pa2 br1 mt1">&nbsp;</div>
         </fieldset>
     </div>
+<<<<<<< Updated upstream
 
     <div class="dib ">
         <fieldset class="br1 mw5 ba b--black-30">
@@ -65,3 +71,32 @@
         </fieldset>
     </div>
 </body>
+=======
+    <div id="verbBox">
+        Base<input type="text" id="base"><br>
+        Singular third person present<input type="text" id="thirdPres"><br>
+        <input type="radio" id="trans" name="trans">Transitive<input type="radio" id="intrans" name="trans">Intransitive<input type="radio" id="ergative" name="trans" checked>Ergative
+    </div>
+</body>
+
+<script>
+    const inTypes = { text: 0, checkbox: 1, radio: 2 };
+
+    var nounTemplate = [
+        { key: 'base', label: 'Base', type: inTypes.text },
+        { key: 'plural', label: 'Plural', type: inTypes.text },
+        { key: 'proper', label: 'Proper name', type: inTypes.checkbox },
+        { key: 'countable', label: 'Countable', type: inTypes.checkbox }
+    ];
+    var verbTemplate = [
+        { key: 'base', label: 'Base', type: inTypes.text },
+        { key: 'thirdPres', label: 'Singular third person present', type: inTypes.text },
+        { key: 'trans', labels: ['Transitive', 'Intransitive', 'Ergative'], type: inTypes.radio }
+    ];
+    var submitInd = 0;
+
+    function renderInputs(template, onSubmit, parentEl, target = {}, submitLabel = 'Submit') {
+        
+    }
+</script>
+>>>>>>> Stashed changes
