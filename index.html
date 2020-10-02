@@ -59,9 +59,9 @@
 
             <div id="nounBox" class="tr">
                 <label>Base <input class="w4" id="nounBase" v-model="base" placeholder="noun"></label>
-                <label>Plural <input type="text" class="w4" id="plural" placeholder="nouns"></label>
-                <label>Proper name <input type="checkbox" id="proper"></label>
-                <label>Countable <input type="checkbox" id="countable"></label>
+                <label>Plural <input class="w4" id="plural" v-model="plural" placeholder="nouns"></label>
+                <label>Countable <input type="checkbox" id="countable" v-model="countable"></label>
+                <label>Proper name <input type="checkbox" id="proper" v-model="proper"></label>
             <button class="td1 ml-auto mr0 db mt2 b--black-30 hover-bg-black pv1 bg-dark-blue ph2 br1 white" v-on:click="add">Add</button>
             </div>
         </fieldset>
@@ -94,12 +94,12 @@
         data: {
             base: '',
             plural: '',
-            countable: false,
+            countable: true,
             proper: false
         },
         methods: {
             add: function () {
-                console.log(this.base);
+                new Noun({ base: this.base, plural: this.plural, countable: this.countable, proper: this.proper });
             }
         }
     });
