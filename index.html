@@ -48,7 +48,7 @@
     </div>
 
     <div class="dib ">
-        <fieldset class="br1 mw5 ba b--black-30">
+        <fieldset class="br1 mw5 ba b--black-30" id="wordForms">
             <legend class="bg-dark-gray white ph1 pv1 br1">new
                 <select class="bg-inherit white bn" id="wordType">
                     <option value="noun">noun</option>
@@ -58,7 +58,7 @@
             </legend>
 
             <div id="nounBox" class="tr">
-            <button class="td1 ml-auto mr0 db mt2 b--black-30 hover-bg-black pv1 bg-dark-blue ph2 br1 white" v-on:click="add">Add</button>
+            
             </div>
             <div id="verbBox" class="tr"></div>
         </fieldset>
@@ -71,9 +71,10 @@
     var nounTemplate = [
         { key: 'base', label: 'Base', type: 'text' },
         { key: 'plural', label: 'Plural', type: 'text' },
-        { key: 'countable', label: 'Countable', type: 'checkbox'},
+        { key: 'countable', label: 'Countable', type: 'checkbox', defVal: true },
         { key: 'proper', label: 'Proper name', type: 'checkbox' }
     ];
+    nounTemplate.wordClass = Noun;
     var verbTemplate = [
         { key: 'base', label: 'Base', type: inTypes.text },
         { key: 'thirdPres', label: 'Singular third person present', type: inTypes.text },
@@ -81,16 +82,39 @@
     ];
     var submitInd = 0;
 
-    function renderInputs(template, onSubmit, parentEl, target = {}, submitLabel = 'Submit') {
+    function renderInputs(template, methods, parentEl, target = {}, submitLabel = 'Submit') {
         var str = '';
+        var data = {};
         for (var field of template) {
-            str += '<label>' + field.label + '<input type="' + field.type+'" class="w4" v-model="'+field.key+'" ></label > '
+            str += '<label>' + field.label + '<input type="' + field.type + '" class="w4" v-model="' + field.key + '" ></label > '
+            data[field.key] = field.defVal;
         }
-        parentEl.insertAdjacentHTML('beforeend', str);
-    }
-    renderInputs(nounTemplate, undefined, nounBox);
-    renderInputs(verbTemplate, undefined, verbBox);
+        data.wordClass = template.wordClass;
+        parentEl.insertAdjacentHTML('beforeend', str + '<button class="td1 ml-auto mr0 db mt2 b--black-30 hover-bg-black pv1 bg-dark-blue ph2 br1 white" v-on:click="add">Add</button>');
 
+        return new Vue({
+            el: '#' + parentEl.id,
+            data: data,
+            methods: methods
+        });
+    }
+
+    function addWord() {
+        var args = {};
+        for (var key in this._data) {
+            args[key] = this[key];
+        }
+        new this.wordClass(args);
+    }
+
+    function makeWordForm(template, className) {
+        wordForms.insertAdjacentHTML('beforeend', '<div id="' + className + 'Form" class="tr"></div');
+        renderInputs(template, { add: addWord }, wordForms.lastChild);
+        
+    }
+    makeWordForm(nounTemplate, 'noun');
+
+    /*
     new Vue({
         el: '#nounBox',
         data: {
@@ -104,5 +128,5 @@
                 new Noun({ base: this.base, plural: this.plural, countable: this.countable, proper: this.proper });
             }
         }
-    });
+    });*/
 </script>
