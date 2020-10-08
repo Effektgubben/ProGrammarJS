@@ -1,7 +1,7 @@
 ﻿<head>
     <meta charset="utf-8">
     <title>ProGrammar</title>
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@200;400;500&display=swap"
           rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css" />
@@ -50,7 +50,7 @@
     <div class="dib ">
         <fieldset class="br1 mw5 ba b--black-30" id="wordForms">
             <legend class="bg-dark-gray white ph1 pv1 br1">new
-                <select class="bg-inherit white bn" id="wordType">
+                <select class="bg-inherit white bn" id="wordType" v-model="wordClass" v-on:change="setActiveForm" >
                     <option value="noun">noun</option>
                     <option value="verb">verb</option>
                     <option value="adverb">adverb</option>
@@ -68,18 +68,32 @@
 <script>
     const inTypes = { text: 0, checkbox: 1, radio: 2 };
 
+    var formsVue = new Vue({
+        el: '#wordForms',
+        data: {
+            wordClass: 'noun'
+        },
+        methods: {
+            setActiveForm() {
+                $('.wordForm').hide();
+                $('#' + this.wordClass + 'Form').show();
+            }
+        }
+    });
+
     var nounTemplate = [
         { key: 'base', label: 'Base', type: 'text' },
         { key: 'plural', label: 'Plural', type: 'text' },
         { key: 'countable', label: 'Countable', type: 'checkbox', defVal: true },
         { key: 'proper', label: 'Proper name', type: 'checkbox' }
     ];
-    nounTemplate.wordClass = Noun;
+    nounTemplate.wordClass = Noun; //Is this bad when iterating with for...of?
     var verbTemplate = [
-        { key: 'base', label: 'Base', type: inTypes.text },
-        { key: 'thirdPres', label: 'Singular third person present', type: inTypes.text },
-        { key: 'trans', labels: ['Transitive', 'Intransitive', 'Ergative'], type: inTypes.radio }
+        { key: 'base', label: 'Base', type: 'text' },
+        { key: 'thirdPres', label: 'Singular third person present', type: 'text' },
+        { key: 'trans', labels: ['Transitive', 'Intransitive', 'Ergative'], type: 'radio' }
     ];
+    verbTemplate.wordClass = Verb;
     var submitInd = 0;
 
     function renderInputs(template, methods, parentEl, target = {}, submitLabel = 'Submit') {
@@ -108,11 +122,19 @@
     }
 
     function makeWordForm(template, className) {
-        wordForms.insertAdjacentHTML('beforeend', '<div id="' + className + 'Form" class="tr"></div');
-        renderInputs(template, { add: addWord }, wordForms.lastChild);
+        var id = className + 'Form';
+        wordForms.insertAdjacentHTML('beforeend', '<div id="' + id + '" class="tr wordForm"></div');
         
+        renderInputs(template, { add: addWord }, wordForms.lastChild);
+        $('#' + id).hide();
+        return wordForms.lastChild;
     }
-    makeWordForm(nounTemplate, 'noun');
+    var forms = {
+        noun: makeWordForm(nounTemplate, 'noun'),
+        verb: makeWordForm(verbTemplate, 'verb')
+    };
+    
+    formsVue.setActiveForm();
 
     /*
     new Vue({
