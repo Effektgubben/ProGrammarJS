@@ -82,15 +82,16 @@
     });
 
     var nounTemplate = [
-        { key: 'base', label: 'Base', type: 'text' },
-        { key: 'plural', label: 'Plural', type: 'text' },
+        { key: 'base', label: 'Base', type: 'text', placeholder: 'lemur' },
+        { key: 'plural', label: 'Plural', type: 'text', placeholder: 'lemurs' },
         { key: 'countable', label: 'Countable', type: 'checkbox', defVal: true },
         { key: 'proper', label: 'Proper name', type: 'checkbox' }
     ];
     nounTemplate.wordClass = Noun; //Is this bad when iterating with for...of?
     var verbTemplate = [
-        { key: 'base', label: 'Base', type: 'text' },
-        { key: 'thirdPres', label: 'Singular third person present', type: 'text' },
+        { key: 'base', label: 'Base', type: 'text', placeholder: 'sing' },
+        { key: 'thirdPres', label: 'Singular third person present', type: 'text', placeholder: "Please don't use this field" },
+        { key: 'past', label: 'Past tense', type: 'text', placeholder: 'Not implemented' },
         { key: 'trans', labels: ['Transitive', 'Intransitive', 'Ergative'], type: 'radio' }
     ];
     verbTemplate.wordClass = Verb;
@@ -100,8 +101,17 @@
         var str = '';
         var data = {};
         for (var field of template) {
-            str += '<label>' + field.label + '<input type="' + field.type + '" class="w4" v-model="' + field.key + '" ></label > '
-            data[field.key] = field.defVal;
+            if (field.type === 'radio') {
+                var i = 0;
+                for (var label of field.labels) {
+                    str += '<label>'+label+ '<input type="radio" class="w4" value="' + i + '" v-model="' + field.key + '" ></label>'
+                    i++;
+                }
+            }
+            else {
+                str += '<label>' + field.label + '<input type="' + field.type + (field.placeholder ? '" placeholder="' + field.placeholder:'')+'" class="w4" v-model="' + field.key + '" ></label > '
+            }
+                data[field.key] = field.defVal;
         }
         data.wordClass = template.wordClass;
         parentEl.insertAdjacentHTML('beforeend', str + '<button class="td1 ml-auto mr0 db mt2 b--black-30 hover-bg-black pv1 bg-dark-blue ph2 br1 white" v-on:click="add">Add</button>');
