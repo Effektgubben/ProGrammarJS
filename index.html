@@ -1,17 +1,14 @@
 ﻿<head>
     <meta charset="utf-8">
     <title>ProGrammar</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@200;400;500&display=swap"
           rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css" />
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
 
-    <script src="tools.js"></script>
-    <script src="clauses.js"></script>
-    <script src="wordTypes.js"></script>
-    <script src="generate.js"></script>
 
     <style>
         .ff-1 {
@@ -40,8 +37,10 @@
         <fieldset class="br1 mw5 ba b--black-30">
             <legend class="">
                 <button class="td1 ba b--black-30 hover-bg-black pv1 bg-dark-blue ph2 br1 white"
-                    onclick="generate()">Generate
-                    sentence</button>
+                        onclick="generate()">
+                    Generate
+                    sentence
+                </button>
             </legend>
             <div id="result" class="h4 w5 ff-mono f6 pa2 br1 mt1">&nbsp;</div>
         </fieldset>
@@ -49,8 +48,9 @@
 
     <div class="dib ">
         <fieldset class="br1 mw5 ba b--black-30" id="wordForms">
-            <legend class="bg-dark-gray white ph1 pv1 br1">new
-                <select class="bg-inherit white bn" id="wordType" v-model="wordClass" v-on:change="setActiveForm" >
+            <legend class="bg-dark-gray white ph1 pv1 br1">
+                new
+                <select class="bg-inherit white bn" id="wordType" v-model="wordClass" v-on:change="setActiveForm">
                     <option value="noun">noun</option>
                     <option value="verb">verb</option>
                     <option value="adverb">adverb</option>
@@ -58,7 +58,7 @@
             </legend>
 
             <div id="nounBox" class="tr">
-            
+
             </div>
             <div id="verbBox" class="tr"></div>
         </fieldset>
@@ -66,99 +66,17 @@
 </body>
 
 <script>
-    const inTypes = { text: 0, checkbox: 1, radio: 2 };
-
-    var formsVue = new Vue({
-        el: '#wordForms',
-        data: {
-            wordClass: 'noun'
-        },
-        methods: {
-            setActiveForm() {
-                $('.wordForm').hide();
-                $('#' + this.wordClass + 'Form').show();
-            }
-        }
+    var db = new Dexie('wordsEng');
+    db.version(1).stores({
+        nouns: 'base,plural,countable,proper,gender',
+        verbs: 'base,thirdPres,pastTense,pastPart',
+        adverbs: 'base'
     });
 
-    var nounTemplate = [
-        { key: 'base', label: 'Base', type: 'text', placeholder: 'lemur' },
-        { key: 'plural', label: 'Plural', type: 'text', placeholder: 'lemurs' },
-        { key: 'countable', label: 'Countable', type: 'checkbox', defVal: true },
-        { key: 'proper', label: 'Proper name', type: 'checkbox' }
-    ];
-    nounTemplate.wordClass = Noun; //Is this bad when iterating with for...of?
-    var verbTemplate = [
-        { key: 'base', label: 'Base', type: 'text', placeholder: 'sing' },
-        { key: 'thirdPres', label: 'Singular third person present', type: 'text', placeholder: "Please don't use this field" },
-        { key: 'past', label: 'Past tense', type: 'text', placeholder: 'Not implemented' },
-        { key: 'trans', labels: ['Transitive', 'Intransitive', 'Ergative'], type: 'radio' }
-    ];
-    verbTemplate.wordClass = Verb;
-    var submitInd = 0;
-
-    function renderInputs(template, methods, parentEl, target = {}, submitLabel = 'Submit') {
-        var str = '';
-        var data = {};
-        for (var field of template) {
-            if (field.type === 'radio') {
-                var i = 0;
-                for (var label of field.labels) {
-                    str += '<label>'+label+ '<input type="radio" class="w4" value="' + i + '" v-model="' + field.key + '" ></label>'
-                    i++;
-                }
-            }
-            else {
-                str += '<label>' + field.label + '<input type="' + field.type + (field.placeholder ? '" placeholder="' + field.placeholder:'')+'" class="w4" v-model="' + field.key + '" ></label > '
-            }
-                data[field.key] = field.defVal;
-        }
-        data.wordClass = template.wordClass;
-        parentEl.insertAdjacentHTML('beforeend', str + '<button class="td1 ml-auto mr0 db mt2 b--black-30 hover-bg-black pv1 bg-dark-blue ph2 br1 white" v-on:click="add">Add</button>');
-
-        return new Vue({
-            el: '#' + parentEl.id,
-            data: data,
-            methods: methods
-        });
-    }
-
-    function addWord() {
-        var args = {};
-        for (var key in this._data) {
-            args[key] = this[key];
-        }
-        new this.wordClass(args);
-    }
-
-    function makeWordForm(template, className) {
-        var id = className + 'Form';
-        wordForms.insertAdjacentHTML('beforeend', '<div id="' + id + '" class="tr wordForm"></div');
-        
-        renderInputs(template, { add: addWord }, wordForms.lastChild);
-        $('#' + id).hide();
-        return wordForms.lastChild;
-    }
-    var forms = {
-        noun: makeWordForm(nounTemplate, 'noun'),
-        verb: makeWordForm(verbTemplate, 'verb')
-    };
-    
-    formsVue.setActiveForm();
-
-    /*
-    new Vue({
-        el: '#nounBox',
-        data: {
-            base: '',
-            plural: '',
-            countable: true,
-            proper: false
-        },
-        methods: {
-            add: function () {
-                new Noun({ base: this.base, plural: this.plural, countable: this.countable, proper: this.proper });
-            }
-        }
-    });*/
 </script>
+
+<script src="tools.js"></script>
+<script src="clauses.js"></script>
+<script src="wordTypes.js"></script>
+<script src="generate.js"></script>
+<script src="ui.js"></script>

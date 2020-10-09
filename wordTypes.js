@@ -4,6 +4,10 @@ var words = {
     verbs: [],
     adverbs: []
 };
+db.nouns.toArray(function (nouns) {
+    words.nouns = nouns;
+});
+
 
 class Word {
     constructor(args) {
@@ -21,6 +25,7 @@ class Noun {
         }
         this.gender = args.gender || 0;
         words.nouns.push(this);
+        db.nouns.put({ base: args.base });
     }
     get plural() {
         return this.base + 's';
@@ -31,13 +36,13 @@ class Verb {
     constructor(args) {
         this.base = args.base;
         if (args.thirdPres) {
-            this.thirdPres = args.thirdPres;
+            this.setProp('thirdPres', args.thirdPres);
         }
         if (args.pastTense) {
-            this.pastTense = args.pastTense;
+            this.setProp('pastTense', args.pastTense);
         }
         if (args.pastPart) {
-            this.pastPart = args.pastPart
+            this.setProp('pastPart', args.pastPart);
         }
 
         this.acceptsObj = args.acceptsObj || false;

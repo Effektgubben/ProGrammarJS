@@ -18,7 +18,10 @@ Object.defineProperties(Array.prototype, {
     }
 });
 
-
+Object.prototype.setProp = function (key, val, configurable = true, enumerable = true, writable = true) {
+    Object.defineProperty(this, key, { value: val, configurable: configurable, enumerable: enumerable, writable: writable });
+};
+Object.prototype.setProp.value = ''; //Vue needs this for some reason
 
 function randBool(bias = 0.5){
     return Math.random() < bias;

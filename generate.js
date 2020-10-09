@@ -1,4 +1,4 @@
-new Noun({ base: 'ape' });
+new Noun({ base: 'apa' });
 new Noun({ base: 'idiot' });
 new Noun({ base: 'star' });
 new Noun({ base: 'Donald Trump', proper: true });
